@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React , {useEffect,useState} from "react";
 import RestaurantShimer from "./RestaurantShimer";
 import { useParams } from "react-router-dom";
-import { restaurant } from "../utils/Link";
+import { useMenuItem } from "../utils/useMenuItem";
 
 
 const RestaurantMenu = () => {
@@ -9,27 +9,23 @@ const RestaurantMenu = () => {
   const [loading, setLoading] = React.useState(true);
   const [menulist, setMenuList] = React.useState([]);
   const { id } = useParams();
+  const data = useMenuItem(id);
+  const [openIndex, setOpenIndex] = useState(null); // Track which accordion is open
 
+  //mistake here i am not using useffect after making custom hook
+
+  // Process data only when `data` changes
   useEffect(() => {
-    fetchRestaurantMenu();
-  }, [id]);
+    if (!data || !data.data) return;
 
-  const fetchRestaurantMenu = async () => {
-    const fetchdata = await fetch(
-       restaurant + id + "&catalog_qa=undefined&submitAction=ENTER"
-    );
-
-    const data = await fetchdata.json();
-    console.log(data);
-
+    // restaurant info
     setResInfo(data?.data?.cards[2]?.card?.card?.info);
 
-
+    // find menu cards dynamically
     // data?.data?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards[2]?.card
     //   ?.card?.itemCards;
 
     // not fetch like this  api not same for all day
-
     const regularCards = data?.data?.cards.find((c) => c.groupedCard)
       ?.groupedCard?.cardGroupMap?.REGULAR?.cards;
 
@@ -37,89 +33,140 @@ const RestaurantMenu = () => {
     const items = [];
     regularCards?.forEach((card) => {
       if (card.card?.card?.itemCards) {
-        items.push(...card.card.card.itemCards);
+        items.push(card.card.card);
       }
     });
-
     setMenuList(items || []);
+    console.log("all items");
+    console.log(items);
     setLoading(false);
-  };
+  }, [data]);
 
   if (loading) return <RestaurantShimer />;
 
-
   return (
     <div className="bg-gray-50 min-h-screen pb-10">
+
       {/* Restaurant Header */}
-      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row justify-between items-center mt-6">
-        <div>
+
+      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg  flex flex-col md:flex-row justify-between items-center mt-6">
+        <div className="m-1">
           <h1 className="text-3xl font-extrabold text-gray-800">
             {resinfo.name}
           </h1>
-          <p className="text-gray-600 mt-2">{resinfo.cuisines?.join(", ")}</p>
-          <div className="flex items-center gap-4 mt-4 text-gray-700">
+          <p className="text-gray-600 mt-1">{resinfo.cuisines?.join(", ")}</p>
+          <div className="flex items-center gap-4 mt-2 text-gray-700">
             <span className="font-medium">⭐ {resinfo.avgRating}</span>
             <span>{resinfo.costForTwoMessage}</span>
           </div>
         </div>
         <img
-          className="w-48 h-48 object-contain mt-4 md:mt-0"
+          className="w-48 h-48 object-contain "
           src="https://www.logodesign.net/logo/smoking-burger-with-lettuce-3624ld.png"
           alt="Restaurant"
         />
       </div>
 
-      {/* Menu Section */}
-      <div className="max-w-5xl mx-auto mt-10 px-4">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Top Dishes</h2>
+      {/* all categories */}
 
-        {/* Grid layout for items */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.isArray(menulist) && menulist.length > 0 ? (
-            menulist.map((item) => {
-              const info = item.card.info;
-              return (
+      {/* make accordian for categories */}
+      <div className="max-w-5xl mx-auto mt-6 px-4">
+        {Array.isArray(menulist) && menulist.length > 0 ? (
+          menulist.map((item, index) => {
+            const { title, itemCards } = item;
+            return (
+              // <div key={index} className="mt-4">
+              //   <div className="flex items-center justify-between  p-2  cursor-pointer">
+              //     <h2 className="text-xl font-extrabold text-gray-800 p-2">
+              //       {title} ({itemCards.length})
+              //     </h2>
+              //     <button
+              //       className="text-gray-600 focus:outline-none"
+              //       onClick={() => setIsOpen(!isOpen)}
+              //     >
+              //       <span>{isOpen ? "▲" : "▼"}</span>
+              //     </button>
+              //   </div>
+              //   <div className="flex flex-wrap gap-6">
+              // {isOpen &&
+
+
+              
+              <div key={index} className="mt-4 border-b border-gray-300">
+                {/* Accordion Header */}
                 <div
-                  key={info.id}
-                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden"
+                  className="flex items-center justify-between p-3 bg-white cursor-pointer"
+                  onClick={() =>
+                    setOpenIndex(openIndex === index ? null : index)
+                  }
                 >
-                  {info.imageId && (
-                    <img
-                      className="w-full h-40 object-cover"
-                      src={`https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_400,h_300,c_fit/${info.imageId}`}
-                      alt={info.name}
-                    />
-                  )}
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      {info.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                      {info.description}
-                    </p>
-                    <div className="mt-3 flex justify-between items-center">
-                      <span className="text-red-600 font-bold">
-                        ₹{(info.price || info.defaultPrice) / 100}
-                      </span>
-                      <span className="text-gray-500 text-sm">
-                        ⭐ {info.ratings?.aggregatedRating?.rating || "N/A"}
-                      </span>
-                    </div>
-                  </div>
+                  <h2 className="text-lg font-bold text-gray-800">
+                    {title} ({itemCards.length})
+                  </h2>
+                  <span>{openIndex === index ? "▲" : "▼"}</span>
                 </div>
-              );
-            })
-          ) : (
-            <div className="col-span-3 text-center text-xl font-semibold text-gray-500">
-              Closed Today
-            </div>
-          )}
-        </div>
+
+                {/* Accordion Content */}
+                {openIndex === index && (
+                  <div className="p-4 bg-gray-50">
+                    {Array.isArray(itemCards) && itemCards.length > 0 ? (
+                      itemCards.map((card, cardIndex) => {
+                        const info = card.card.info;
+                        return (
+                          <div 
+                            key={`${info.id}-${cardIndex}`}
+                            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden flex w-full justify-between m-2"
+                          >
+                            {/* Left Content */}
+                            <div className="p-4">
+                              <h3 className="text-lg font-semibold text-gray-800">
+                                {info.name}
+                              </h3>
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                {info.description}
+                              </p>
+                              <div className="mt-3 flex justify-between items-center">
+                                <span className="text-red-600 font-bold">
+                                  ₹{(info.price || info.defaultPrice) / 100}
+                                </span>
+                                <span className="text-gray-500 text-sm">
+                                  ⭐{" "}
+                                  {info.ratings?.aggregatedRating?.rating ||
+                                    "N/A"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Image */}
+                            {info.imageId && (
+                              <img
+                                className="w-40 h-40 object-cover rounded"
+                                src={`https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_400,h_300,c_fit/${info.imageId}`}
+                                alt={info.name}
+                              />
+                            )}
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p className="col-span-2 text-center text-xl font-semibold text-gray-500">
+                        No Items Found
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <div className="text-center text-xl font-semibold text-gray-500">
+            Closed Today
+          </div>
+        )}
       </div>
     </div>
   );
 };
-
 export default RestaurantMenu;
 
 
