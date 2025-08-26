@@ -8,6 +8,8 @@ import {
 
 const Cart = () => {
   const dispatch = useDispatch();
+
+  //always subscribe the small portion of store so that if any random change is happen in store not affect our cart
   const { items, totalQuantity, totalPrice } = useSelector(
     (state) => state.cart
   );
@@ -31,21 +33,23 @@ const Cart = () => {
                   ₹{(item.price / 100).toFixed(2)}
                 </p>
               </div>
-
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => dispatch(removeItemFromCart(item))}
-                  className="bg-gray-300 px-2 rounded text-lg"
-                >
-                  -
-                </button>
-                <span>{item.quantity}</span>
-                <button
-                  onClick={() => dispatch(addItemToCart(item))}
-                  className="bg-green-500 text-white px-2 rounded text-lg"
-                >
-                  +
-                </button>
+              <div className="flex flex-col items-center gap-1">
+                <img className="w-20 h-20 object-cover rounded-xl" src={`https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_400,h_300,c_fit/${item.imageId}`} alt={item.name}  />
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => dispatch(removeItemFromCart(item))}
+                    className="bg-gray-300 px-2 rounded text-lg"
+                  >
+                    -
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button
+                    onClick={() => dispatch(addItemToCart(item))}
+                    className="bg-green-500 text-white px-2 rounded text-lg"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -61,10 +65,10 @@ const Cart = () => {
               className="bg-red-500 text-white px-6 py-2 rounded"
             >
               Clear Cart
-              </button>
-              <button  className="bg-blue-500 text-white px-6 py-2 rounded">
-                Checkout
-              </button>
+            </button>
+            <button className="bg-blue-500 text-white px-6 py-2 rounded">
+              Checkout
+            </button>
           </div>
         </>
       )}
