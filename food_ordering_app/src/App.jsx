@@ -1,16 +1,17 @@
-
-import './App.css'
-import Header from './Component/Header'
+import "./App.css";
+import Header from "./Component/Header";
 // import Body from './Component/Body'
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
-import { lazy, Suspense } from 'react'
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import appStore from "./utils/appStore";
+import { Provider } from "react-redux";
 // import About from './Component/About'
 // import Contact from './Component/Contact'
 // import Cart from './Component/Cart'
 // import RestaurantMenu from './Component/RestaurantMenu.jsx'
 
-const Body = lazy(()=> import("./Component/Body"))
-const About = lazy(()=> import("./Component/About"))
+const Body = lazy(() => import("./Component/Body"));
+const About = lazy(() => import("./Component/About"));
 const Contact = lazy(() => import("./Component/Contact"));
 const Cart = lazy(() => import("./Component/Cart"));
 const RestaurantMenu = lazy(() => import("./Component/RestaurantMenu"));
@@ -21,11 +22,10 @@ const RestaurantMenu = lazy(() => import("./Component/RestaurantMenu"));
 
 //header
 
-
 //  -logo
 //  -nav item
 //body
-//  -search 
+//  -search
 //    -restaurant caontainer
 //      -resaturant card
 //        -img
@@ -37,15 +37,17 @@ const RestaurantMenu = lazy(() => import("./Component/RestaurantMenu"));
 
 const AppLayout = () => {
   return (
-    <div className="App">
-      <Header />
-      <Suspense fallback={<h1 className="text-center">Loading...</h1>}>
-        <Outlet />
-      </Suspense>
-    </div>
+    <Provider store={appStore}>
+      <div className="App">
+        <Header />
+        <Suspense fallback={<h1 className="text-center">Loading...</h1>}>
+          <Outlet />
+        </Suspense>
+      </div>
+    </Provider>
   );
 };
-  
+
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -60,9 +62,6 @@ const appRouter = createBrowserRouter([
   },
 ]);
 
-
-
-
 export default function App() {
-  return <RouterProvider router={appRouter}></RouterProvider>
-};
+  return <RouterProvider router={appRouter}></RouterProvider>;
+}
