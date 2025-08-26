@@ -2,6 +2,7 @@ import React , {useEffect,useState} from "react";
 import RestaurantShimer from "./RestaurantShimer";
 import { useParams } from "react-router-dom";
 import { useMenuItem } from "../utils/useMenuItem";
+import MenuItem from "./menuItem";
 
 
 const RestaurantMenu = () => {
@@ -10,7 +11,7 @@ const RestaurantMenu = () => {
   const [menulist, setMenuList] = React.useState([]);
   const { id } = useParams();
   const data = useMenuItem(id);
-  const [dishcount, setDishCount] = useState(0);
+  
   const [openIndex, setOpenIndex] = useState(null); // Track which accordion is open
 
   //mistake here i am not using useffect after making custom hook
@@ -113,73 +114,7 @@ const RestaurantMenu = () => {
                     {Array.isArray(itemCards) && itemCards.length > 0 ? (
                       itemCards.map((card, cardIndex) => {
                         const info = card.card.info;
-                        return (
-                          <div
-                            key={`${info.id}-${cardIndex}`}
-                            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden flex w-full justify-between m-2"
-                          >
-                            {/* Left Content */}
-                            <div className="p-4 flex-1">
-                              <h3 className="text-lg font-semibold text-gray-800">
-                                {info.name}
-                              </h3>
-                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                {info.description}
-                              </p>
-                              <div className="mt-3 flex justify-between items-center">
-                                <span className="text-red-600 font-bold">
-                                  ₹{(info.price || info.defaultPrice) / 100}
-                                </span>
-                                <span className="text-gray-500 text-sm">
-                                  ⭐{" "}
-                                  {info.ratings?.aggregatedRating?.rating ||
-                                    "N/A"}
-                                </span>
-                              </div>
-                              {/* Add to Cart Button and remove quantity */}
-                              <div className="mt-4 bg-black  text-white text-sm px-1 py-1 rounded shadow w-28 ">
-                                {dishcount > 0 && (
-                                  <button
-                                    className="text-sm 
-                                    text-green-600  bg-white font-semibold px-2 py-1 rounded"
-                                    onClick={() => {
-                                      console.log(
-                                        `Removed ${info.name} from cart`
-                                      ),
-                                        setDishCount(dishcount - 1);
-                                    }}
-                                  >
-                                    -
-                                  </button>
-                                )}
-                                <button
-                                  onClick={() => {
-                                    console.log(`Added ${info.name} to cart`),
-                                      setDishCount(dishcount + 1);
-                                  }}
-                                  className="px-1"
-                                >
-                                  Add +
-                                </button>
-
-                                {dishcount > 0 && (
-                                  <span className="ml-2 bg-white text-green-600 font-bold px-2 py-1 rounded">
-                                    {dishcount}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Image */}
-                            {info.imageId && (
-                              <img
-                                className="w-38 h-38  object-cover rounded-3xl md:ml-4 p-2 "
-                                src={`https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_400,h_300,c_fit/${info.imageId}`}
-                                alt={info.name}
-                              />
-                            )}
-                          </div>
-                        );
+                        return <MenuItem key={info.id} item={info} cardIndex={cardIndex} />;
                       })
                     ) : (
                       <p className="col-span-2 text-center text-xl font-semibold text-gray-500">

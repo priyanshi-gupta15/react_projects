@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import { logo } from "../utils/Link";
 import { Link } from "react-router-dom";
 import UserContext from "../utils/userContext";
+import {useSelector} from "react-redux"
 
 const Header = () => {
   const [Islogin, setIsLogin] = useState("Login");
   const { user } = React.useContext(UserContext);
 
+//subscribing to the store using selector
+  const cartItems = useSelector((store) => store.cart.items);
+  console.log(cartItems);
+  
   return (
     <header className="flex items-center justify-between px-8 shadow-md bg-white sticky top-0 z-50">
       {/* Logo */}
       <div className="flex items-center">
-        <img className="w-28 object-contain" src={logo} alt="logo" />
+        <img className="w-18 object-contain" src={logo} alt="logo" />
       </div>
 
       {/* Navigation & Login aligned to right */}
@@ -28,8 +33,8 @@ const Header = () => {
             <li className="hover:text-red-500">
               <Link to="/contact">Contact Us</Link>
             </li>
-            <li className="hover:text-red-500">
-              <Link to="/cart">Cart</Link>
+            <li className="">
+              <Link to="/cart">🛒 <sup className="bg-red-500 px-1.5 py-0.5 rounded-full text-white">{cartItems.length}</sup></Link>
             </li>
           </ul>
         </nav>

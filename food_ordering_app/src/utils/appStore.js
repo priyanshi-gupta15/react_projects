@@ -1,11 +1,9 @@
-import {configureStore} from "@reduxjs/toolkit"
-
-
-
+import { configureStore } from "@reduxjs/toolkit"
+import cartSlice from "./cartSlice"
 const appStore = configureStore({
-  user: {
-    name : "priyanshi"
-  },
+  reducer : {
+    cart: cartSlice
+  }
 })
 
 
