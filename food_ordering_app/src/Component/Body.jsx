@@ -27,9 +27,7 @@ const Body = () => {
       "https://corsproxy.io/https://www.swiggy.com/dapi/restaurants/list/v5?lat=21.99740&lng=79.00110&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
     );
     const json = await data.json();
-    console.log("Fetched restaurant data:");
-
-    console.log(json);
+   
 
     const restaurantCard = json?.data?.cards.find(
       (c) => c?.card?.card?.gridElements?.infoWithStyle?.restaurants
@@ -54,7 +52,7 @@ if (!restaurantCard) {
     setfilterRestaurantList(filteredlist);
     setSearchText("");
   };
-  console.log("render");
+  
 
   return (
     <>
@@ -118,7 +116,7 @@ if (!restaurantCard) {
                       (res) => res.info.avgRating >= 4.4
                     );
                     setfilterRestaurantList(topreslist);
-                    console.log(topreslist);
+                    
                   }}
                 >
                   ⭐Top Rated Restaurants

@@ -39,8 +39,7 @@ const RestaurantMenu = () => {
       }
     });
     setMenuList(items || []);
-    console.log("all items");
-    console.log(items);
+    
     setLoading(false);
   }, [data]);
 

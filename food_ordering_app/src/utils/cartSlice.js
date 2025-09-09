@@ -60,10 +60,10 @@ const cartSlice = createSlice({
       //state =[]
       //this update the local state directlt
       //to modify global object we return [] ,
-      console.log(state);
+
       
       state.items = [];
-      console.log(state);
+     
       
       state.totalQuantity = 0;
       state.totalPrice = 0;

@@ -10,7 +10,7 @@ const Header = () => {
 
 //subscribing to the store using selector
   const cartItems = useSelector((store) => store.cart.items);
-  console.log(cartItems);
+  
   
   return (
     <header className="flex items-center justify-between px-8 shadow-md bg-white sticky top-0 z-50">

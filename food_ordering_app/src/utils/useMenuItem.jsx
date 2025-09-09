@@ -8,7 +8,7 @@ export const useMenuItem = (id) => {
     const fetchdata = async () => {
       const fetchRes = await fetch(restaurant + id + "&catalog_qa=undefined&submitAction=ENTER");
       const data = await fetchRes.json();
-      console.log(data);
+      
       
       setResInfo(data);
     };
